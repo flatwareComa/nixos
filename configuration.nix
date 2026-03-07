@@ -1,128 +1,86 @@
-{ config, pkgs, ... }:
+# Edit this configuration file to define what should be installed on
+# your system. Help is available in the configuration.nix(5) man page, on
+# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
+
+{ config, lib, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+imports =
+[ # Include the results of the hardware scan.
+	./hardware-configuration.nix
+	./awesome.nix
+	./syncthing.nix
+	./minecraft.nix
+	./users.nix
+];
 
-# Bootloader.
-boot.loader.systemd-boot.enable = true;
-boot.loader.efi.canTouchEfiVariables = true;
 
-networking.hostName = "DAUGHTER"; # Define your hostname.
-# networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+# Use the extlinux boot loader. (NixOS wants to enable GRUB by default)
+boot.loader.grub.enable = false;
+# Enables the generation of /boot/extlinux/extlinux.conf
+boot.loader.generic-extlinux-compatible.enable = true;
 
-# Configure network proxy if necessary
-# networking.proxy.default = "http://user:password@proxy:port/";
-networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-# Enable networking
+networking.hostName = "MOTHER";
 networking.networkmanager.enable = true;
-nixpkgs.config.allowUnfree = true;
 
-networking.firewall.checkReversePath = false;
+nix.settings.experimental-features = ["nix-command" "flakes"];
+
+fileSystems."/mnt/xDrive" = {
+	device = "/dev/sda1";
+	fsType = "ext4";
+	options = [
+		"users"
+	];
+};
 
 # Set your time zone.
 time.timeZone = "Europe/London";
 
-# Select internationalisation properties.
-i18n.defaultLocale = "en_GB.UTF-8";
+nixpkgs.config.allowUnfree = true;
 
-i18n.extraLocaleSettings = {
-	LC_ADDRESS = "en_GB.UTF-8";
-	LC_IDENTIFICATION = "en_GB.UTF-8";
-	LC_MEASUREMENT = "en_GB.UTF-8";
-	LC_MONETARY = "en_GB.UTF-8";
-	LC_NAME = "en_GB.UTF-8";
-	LC_NUMERIC = "en_GB.UTF-8";
-	LC_PAPER = "en_GB.UTF-8";
-	LC_TELEPHONE = "en_GB.UTF-8";
-	LC_TIME = "en_GB.UTF-8";
+i18n.defaultLocale = "en_US.UTF-8";
+console = {
+  font = "Lat2-Terminus16";
+  keyMap = "us";
+  useXkbConfig = true; # use xkb.options in tty.
 };
 
-services = {
-	xserver = {
-		enable = true;
-		displayManager.gdm.enable = true;
-		desktopManager.gnome.enable = true;
-		xkb = {
-			layout = "gb";
-			variant = "";
-		};
-		libinput.enable = true;
-	};
+# Enable the X11 windowing system.
+services.xserver.enable = true;
 
-	printing = {
-		enable = true;
-	};
-
-	pipewire = {
-		enable = true;
-		alsa.enable = true;
-		alsa.support32Bit = true;
-		pulse.enable = true;
-		wireplumber.enable = true;
-	};
-
-	flatpak = {
-		enable = true;
-	};
+services.pipewire = {
+  enable = true;
+  pulse.enable = true;
 };
 
-# Configure console keymap
-console.keyMap = "uk";
+programs.firefox.enable = true;
 
-# Define a user account. Don't forget to set a password with ‘passwd’.
-users.users.kas = {
-	isNormalUser = true;
-	description = "kas";
-	extraGroups = [ "networkmanager" "wheel" ];
-	packages = with pkgs; [
-		
-	];
-};
-
-nixpkgs.config.permittedInsecurePackages = [
-                "electron-36.9.5"
-              ];
-
-# List packages installed in system profile. To search, run:
-# $ nix search wget
 environment.systemPackages = with pkgs; [
-	neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+	neovim 
 	wget
-	firefox
-	protonvpn-gui
-	vlc
-	git
-	prismlauncher
-	anki
-	webcord
-	qbittorrent
-	joplin-desktop
 	alacritty
-	mpv
-	cmatrix
-	steam
-	wineWowPackages.waylandFull
-	winetricks
-	lutris
-	inkscape
-	gimp
-	wireguard-tools
-	libreoffice-qt-fresh
-	libgcc
+	git
 ];
 
-# Some programs need SUID wrappers, can be configured further or are
-# started in user sessions.
-programs.mtr.enable = true;
-programs.gnupg.agent = {
-	enable = true;
-	enableSSHSupport = true;
-};
 
-system.stateVersion = "25.05"; # Did you read the comment?
+  # This option defines the first version of NixOS you have installed on this particular machine,
+  # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
+  #
+  # Most users should NEVER change this value after the initial install, for any reason,
+  # even if you've upgraded your system to a new NixOS release.
+  #
+  # This value does NOT affect the Nixpkgs version your packages and OS are pulled from,
+  # so changing it will NOT upgrade your system - see https://nixos.org/manual/nixos/stable/#sec-upgrading for how
+  # to actually do that.
+  #
+  # This value being lower than the current NixOS release does NOT mean your system is
+  # out of date, out of support, or vulnerable.
+  #
+  # Do NOT change this value unless you have manually inspected all the changes it would make to your configuration,
+  # and migrated your data accordingly.
+  #
+  # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
+  system.stateVersion = "25.11"; # Did you read the comment?
 
 }
+
