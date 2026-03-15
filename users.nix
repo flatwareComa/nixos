@@ -10,4 +10,10 @@
 		];
 	};
 
+	users.users.plex =
+	{
+		isSystemUser = true;
+		extraGroups = [ "media" ];
+	};
+
 }

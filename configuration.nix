@@ -9,9 +9,12 @@ imports =
 [ # Include the results of the hardware scan.
 	./hardware-configuration.nix
 	./awesome.nix
-	./syncthing.nix
-	./minecraft.nix
+#	./syncthing.nix
+#	./minecraft.nix
 	./users.nix
+	./plex.nix
+	./qbittorrent.nix
+	./jellyfin.nix
 ];
 
 
@@ -38,12 +41,6 @@ time.timeZone = "Europe/London";
 
 nixpkgs.config.allowUnfree = true;
 
-i18n.defaultLocale = "en_US.UTF-8";
-console = {
-  font = "Lat2-Terminus16";
-  keyMap = "us";
-  useXkbConfig = true; # use xkb.options in tty.
-};
 
 # Enable the X11 windowing system.
 services.xserver.enable = true;

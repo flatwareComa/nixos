@@ -2,14 +2,15 @@
   description = "A very basic flake";
 
   inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
-    nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-minecraft, ...}: {
+  outputs = inputs@{ self, nixpkgs, nix-minecraft, ... }: {
 
-	nixosConfigurations."edi" = nixpkgs.lib.nixosSystem {
-		system = "aarch64-linux";
+	nixosConfiguration."MOTHER" = nixpkgs.lib.nixosSystem {
+
+		system = "arm64-linux";
 		modules = [
 			./configuration.nix
 			./minecraft.nix
@@ -18,6 +19,7 @@
 				nixpkgs.overlays = [inputs.nix-minecraft.overlay];
 			}
 		];
+
 	};
 
   };

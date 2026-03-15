@@ -1,4 +1,4 @@
-{config, pkgs, nix-minecraft.url, ...}:
+{config, pkgs, lib, ...}:
 
 {
 	imports = [ inputs.nix-minecraft.nixosModules.minecraft-servers ];
